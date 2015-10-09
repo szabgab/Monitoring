@@ -5,7 +5,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
 	NAME         => 'Monitoring',
 	AUTHOR       => q{Gabor Szabo <szabgab@cpan.org>},
-	VERSION_FROM => 'lib/Monitor.pm',
+	VERSION_FROM => 'lib/Monitoring.pm',
 	ABSTRACT     => 'Monitoring web sites',
 	( $ExtUtils::MakeMaker::VERSION >= 6.3002
 		? ( 'LICENSE' => 'perl' )

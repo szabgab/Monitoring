@@ -3,6 +3,7 @@ use warnings;
 
 use Test::More tests => 1;
 
-use Monitor;
+use Monitoring;
+use Monitoring::Sendmail;
 ok 1;
 

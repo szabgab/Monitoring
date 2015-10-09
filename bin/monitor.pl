@@ -1,5 +1,5 @@
 use strict;
 use warnings;
-use Monitor;
-Monitor->new_with_options->run;
+use Monitoring;
+Monitoring->new_with_options->run;
 

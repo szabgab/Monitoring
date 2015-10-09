@@ -1,6 +1,6 @@
 use strict;
 use warnings;
 
-use Monitor;
-Monitor->new_with_options->report;
+use Monitoring;
+Monitoring->new_with_options->report;
 
