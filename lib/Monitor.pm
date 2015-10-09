@@ -10,21 +10,21 @@ use Time::HiRes qw(time);
 use Text::CSV;
 use Fcntl qw(:flock SEEK_END);
 
-option verbose => (is => 'ro', default => 0, doc => 'Print what we are doing');
+option verbose => (is => 'ro', required => 0, default => 0, doc => 'Print what we are doing');
+option config => (is => 'ro', required => 1, format => 's', doc => 'Path to configuration YAML file (monitor.yml)');
 
 sub run {
 	my ($self) = @_;
 
-	my $config_file = 'monitor.yml';
 	my $report_file = 'report.txt';
 
 	my $ua = LWP::UserAgent->new;
 	$ua->timeout(10);
 	my $csv = Text::CSV->new;
 
-	die "Config file is missing\n" if not -e $config_file;
+	die "Config file '" . $self->config . "'is missing\n" if not -e $self->config;
 
-	my $config = eval { LoadFile $config_file };
+	my $config = eval { LoadFile $self->config };
 	die "Incorrect format of configuration file\n\n$@" if $@;
 
 	my $time = strftime '%Y-%m-%dT%H:%M:%S', gmtime();
