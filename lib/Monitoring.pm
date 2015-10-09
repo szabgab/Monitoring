@@ -1,4 +1,4 @@
-package Monitor;
+package Monitoring;
 use 5.010;
 use Moo;
 use MooX::Options;
