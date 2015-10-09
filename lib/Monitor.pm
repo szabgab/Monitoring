@@ -10,6 +10,8 @@ use Time::HiRes qw(time);
 use Text::CSV;
 use Fcntl qw(:flock SEEK_END);
 
+our $VERSION = '0.01';
+
 option verbose => (is => 'ro', required => 0, default => 0, doc => 'Print what we are doing');
 option config => (is => 'ro', required => 1, format => 's', doc => 'Path to configuration YAML file (monitor.yml)');
 
