@@ -62,6 +62,7 @@ sub report {
 	my ($self) = @_;
 
 	my $csv = Text::CSV->new ( { binary => 1 } ) or die "Cannot use CSV: ".Text::CSV->error_diag ();
+	my $config = eval { LoadFile $self->config };
 	open my $fh, "<:encoding(utf8)", $report_file or die "$report_file: $!";
 	my %last;
 	while ( my $row = $csv->getline( $fh ) ) {
@@ -72,8 +73,8 @@ sub report {
 	foreach my $url (keys %last) {
 		if ($last{$url}[2] != 200) {
 			send_mail( {
-					From    => $from,
-					To      => $to,
+					From    => $config->{from},
+					To      => $config->{to},
 					Subject => "$url is not OK",
 				},
 				{
@@ -82,8 +83,8 @@ sub report {
 			);
 		} elsif ($last{$url}[3] > 4) {
 			send_mail( {
-					From    => $from,
-					To      => $to,
+					From    => $config->{from},
+					To      => $config->{to},
 					Subject => "$url is too slow",
 				},
 				{
