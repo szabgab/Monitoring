@@ -3,6 +3,7 @@ use 5.010;
 use Moo;
 use MooX::Options;
 use autodie;
+use Data::Dumper qw(Dumper);
 use LWP::UserAgent;
 use POSIX qw(strftime);
 use YAML qw(LoadFile);
@@ -10,15 +11,17 @@ use Time::HiRes qw(time);
 use Text::CSV;
 use Fcntl qw(:flock SEEK_END);
 
+use Monitoring::Sendmail qw(send_mail);
+
 our $VERSION = '0.01';
 
 option verbose => (is => 'ro', required => 0, default => 0, doc => 'Print what we are doing');
 option config => (is => 'ro', required => 1, format => 's', doc => 'Path to configuration YAML file (monitor.yml)');
+my $report_file = 'report.txt';
 
 sub run {
 	my ($self) = @_;
 
-	my $report_file = 'report.txt';
 
 	my $ua = LWP::UserAgent->new;
 	$ua->timeout(10);
@@ -53,6 +56,42 @@ sub _log {
 	my ($self, $msg) = @_;
 	say $msg if $self->verbose;
 	return;
+}
+
+sub report {
+	my ($self) = @_;
+
+	my $csv = Text::CSV->new ( { binary => 1 } ) or die "Cannot use CSV: ".Text::CSV->error_diag ();
+	open my $fh, "<:encoding(utf8)", $report_file or die "$report_file: $!";
+	my %last;
+	while ( my $row = $csv->getline( $fh ) ) {
+		my ($date, $url, $status, $elapsed_time) = @$row;
+		$last{$url} = $row;
+	}
+	close $fh;
+	foreach my $url (keys %last) {
+		if ($last{$url}[2] != 200) {
+			send_mail( {
+					From    => $from,
+					To      => $to,
+					Subject => "$url is not OK",
+				},
+				{
+            		text => join '  ', @{ $last{$url} },
+				}
+			);
+		} elsif ($last{$url}[3] > 4) {
+			send_mail( {
+					From    => $from,
+					To      => $to,
+					Subject => "$url is too slow",
+				},
+				{
+            		text => join '  ', @{ $last{$url} },
+				}
+			);
+		}
+	}
 }
 
 
