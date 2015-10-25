@@ -16,6 +16,7 @@ WriteMakefile(
 		'MooX::Options'                  => 0,
 		'autodie'                        => 0,
 		'LWP::UserAgent'                 => 0,
+		'LWP::Protocol::https'           => 0,
 		'POSIX'                          => 0,
 		'YAML'                           => 0,
 		'Time::HiRes'                    => 0,
