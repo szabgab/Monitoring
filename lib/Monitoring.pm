@@ -17,23 +17,28 @@ our $VERSION = '0.01';
 
 option verbose => (is => 'ro', required => 0, default => 0, doc => 'Print what we are doing');
 option config => (is => 'ro', required => 1, format => 's', doc => 'Path to configuration YAML file (monitor.yml)');
+
+has cfg    => (is => 'rw');
 my $report_file = 'report.txt';
+
+sub BUILD {
+	my ($self) = @_;
+
+	die "Config file '" . $self->config . "'is missing\n" if not -e $self->config;
+
+	eval { $self->cfg( LoadFile $self->config ) };
+	die "Incorrect format of configuration file\n\n$@" if $@;
+}
 
 sub run {
 	my ($self) = @_;
-
 
 	my $ua = LWP::UserAgent->new;
 	$ua->timeout(10);
 	my $csv = Text::CSV->new;
 
-	die "Config file '" . $self->config . "'is missing\n" if not -e $self->config;
-
-	my $config = eval { LoadFile $self->config };
-	die "Incorrect format of configuration file\n\n$@" if $@;
-
 	my $time = strftime '%Y-%m-%dT%H:%M:%S', gmtime();
-	foreach my $site (@{ $config->{sites} }) {
+	foreach my $site (@{ $self->cfg->{sites} }) {
 		eval {
 			$self->_log("Checking site $site->{name} with url $site->{url}");
 			my $start_time = time;
@@ -62,7 +67,6 @@ sub report {
 	my ($self) = @_;
 
 	my $csv = Text::CSV->new ( { binary => 1 } ) or die "Cannot use CSV: ".Text::CSV->error_diag ();
-	my $config = eval { LoadFile $self->config };
 	open my $fh, "<:encoding(utf8)", $report_file or die "$report_file: $!";
 	my %last;
 	while ( my $row = $csv->getline( $fh ) ) {
@@ -73,8 +77,8 @@ sub report {
 	foreach my $url (keys %last) {
 		if ($last{$url}[2] != 200) {
 			send_mail( {
-					From    => $config->{from},
-					To      => $config->{to},
+					From    => $self->cfg->{from},
+					To      => $self->cfg->{to},
 					Subject => "$url is not OK",
 				},
 				{
@@ -83,8 +87,8 @@ sub report {
 			);
 		} elsif ($last{$url}[3] > 4) {
 			send_mail( {
-					From    => $config->{from},
-					To      => $config->{to},
+					From    => $self->cfg->{from},
+					To      => $self->cfg->{to},
 					Subject => "$url is too slow",
 				},
 				{

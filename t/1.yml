@@ -1,6 +1,6 @@
 ---
 from: gabor@example.com
-to: gabor@example.com
+to: szabgab@example.com
 sites:
   - name: Perl Maven
     url: http://perlmaven.com/
