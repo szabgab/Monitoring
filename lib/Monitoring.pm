@@ -21,6 +21,8 @@ option config => (is => 'ro', required => 1, format => 's', doc => 'Path to conf
 has cfg    => (is => 'rw');
 my $report_file = 'report.txt';
 
+my $SLOW = 1;
+
 sub BUILD {
 	my ($self) = @_;
 
@@ -28,6 +30,13 @@ sub BUILD {
 
 	eval { $self->cfg( LoadFile $self->config ) };
 	die "Incorrect format of configuration file\n\n$@" if $@;
+
+	my $cfg = $self->cfg;
+	my %url;
+	foreach my $site (@{ $self->cfg->{sites} }) {
+		$site->{slow} = $site->{slow} || $self->cfg->{slow} || $SLOW;
+		$url{ $site->{url} } = $site;
+	}
 }
 
 sub run {
@@ -85,7 +94,7 @@ sub report {
             		text => join '  ', @{ $last{$url} },
 				}
 			);
-		} elsif ($last{$url}[3] > 4) {
+		} elsif ($last{$url}[3] > $self->cfg->{url}{$url}{slow}) {
 			send_mail( {
 					From    => $self->cfg->{from},
 					To      => $self->cfg->{to},

@@ -6,3 +6,4 @@ sites:
     url: http://perlmaven.com/
   - name: Code Maven
     url: http://codemaven.com/
+    slow: 4
