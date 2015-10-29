@@ -34,6 +34,7 @@ is_deeply $o->cfg, {
 
 my @fake_response_code;
 my @results;
+my @reports;
 
 sub LWP::UserAgent::get {
 	my $url;
@@ -48,9 +49,14 @@ sub Monitoring::save {
 	shift;
 	push @results, \@_;
 }
+sub Monitoring::send_mail {
+	shift;
+	push @reports, \@_;
+}
 
 @fake_response_code = (200, 404);
 @results = ();
+@reports = ();
 $o->run;
 cmp_deeply \@results, [
   [
@@ -65,5 +71,9 @@ cmp_deeply \@results, [
     404,
     '0'
   ]
-]
+];
+
+#$o->report;
+#diag explain \@reports;
+
 
