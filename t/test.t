@@ -12,16 +12,17 @@ use Path::Tiny qw(path);
 use Monitoring;
 use Monitoring::Sendmail;
 
-plan tests => 4;
+plan tests => 5;
 
 #$ENV{EMAIL_SENDER_TRANSPORT} = 'Test';
 #my @mails = Email::Sender::Simple->default_transport->deliveries;
 
-my $DATE = re('^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d$');
+my $DATE_STR = '\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d';
+my $DATE     = re("^$DATE_STR\$");
 
 my $dir = tempdir( CLEANUP => 1 );
 
-#diag $dir;
+diag $dir;
 
 my $config = path('t/1.yml')->slurp_utf8;
 $config =~ s{test_report.txt}{$dir/report.txt};
@@ -50,10 +51,12 @@ sub LWP::UserAgent::get {
 }
 
 my $mock = Test::Mock::Simple->new( module => 'Monitoring' );
+my $old_save = \&Monitoring::save;
 $mock->add(
 	save => sub {
 		my $self = shift;
 		push @results, \@_;
+		$old_save->( $self, @_ );
 	}
 );
 
@@ -67,6 +70,9 @@ sub Monitoring::send_mail {
 @reports            = ();
 $o->run;
 cmp_deeply \@results, [ [ $DATE, 'http://perlmaven.com/', 200, '0' ], [ $DATE, 'http://codemaven.com/', 404, '0' ] ];
+my @lines = path("$dir/report.txt")->lines;
+cmp_deeply \@lines,
+	[ re("^$DATE_STR,http:\/\/perlmaven.com\/,200,0\$"), re("^$DATE_STR,http:\/\/codemaven.com\/,404,0\$") ];
 
 #$o->generate_report;
 #diag explain \@reports;
