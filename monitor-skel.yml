@@ -1,4 +1,5 @@
 ---
+report_file: report.txt
 from: gabor@example.com
 to: gabor@example.com
 sites:

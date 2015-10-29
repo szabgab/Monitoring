@@ -19,7 +19,6 @@ option verbose => (is => 'ro', required => 0, default => 0, doc => 'Print what w
 option config => (is => 'ro', required => 1, format => 's', doc => 'Path to configuration YAML file (monitor.yml)');
 
 has cfg    => (is => 'rw');
-my $report_file = 'report.txt';
 
 my $SLOW = 1;
 
@@ -65,7 +64,7 @@ sub save {
 	my ($self, @values) = @_;
 
 	my $csv = Text::CSV->new;
-	open my $fh, '>>', $report_file;
+	open my $fh, '>>', $self->cfg->{report_file};
 	flock($fh, LOCK_EX);
 	seek($fh, 0, SEEK_END);
 	$csv->combine(@values);
@@ -83,6 +82,7 @@ sub _log {
 sub report {
 	my ($self) = @_;
 
+	my $report_file = $self->cfg->{report_file};
 	my $csv = Text::CSV->new ( { binary => 1 } ) or die "Cannot use CSV: ".Text::CSV->error_diag ();
 	open my $fh, "<:encoding(utf8)", $report_file or die "$report_file: $!";
 	my %last;
