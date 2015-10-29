@@ -1,8 +1,9 @@
-/report.txt
 *.swp
+.idea/
+/.tidyall.d/
 /MYMETA.json
 /MYMETA.yml
 /Makefile
 /blib/
 /pm_to_blib
-.idea/
+/report.txt

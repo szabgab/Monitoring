@@ -27,8 +27,8 @@ WriteMakefile(
 		'Email::Sender::Transport::SMTP' => 0,
 		'Exporter'                       => 0,
 
-		'Test::More'         => 0,
-		'Test::Deep'         => 0,
+		'Test::More' => 0,
+		'Test::Deep' => 0,
 	},
-	dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
+	dist => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
 );
