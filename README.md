@@ -1,3 +1,7 @@
+###Status
+[![Build Status](https://travis-ci.org/szabgab/Perl-Maven.png)](https://travis-ci.org/szabgab/Perl-Maven)
+
+
 Monitoring web sites
 
 
