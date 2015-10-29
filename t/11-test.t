@@ -24,7 +24,7 @@ my $dir = tempdir( CLEANUP => 1 );
 
 diag $dir;
 
-my $config = path('t/1.yml')->slurp_utf8;
+my $config = path('t/config/1.yml')->slurp_utf8;
 $config =~ s{test_report.txt}{$dir/report.txt};
 path("$dir/monitor.yml")->spew_utf8($config);
 

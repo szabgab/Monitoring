@@ -10,10 +10,10 @@ use Monitoring;
 subtest one => sub {
 	plan tests => 2;
 
-	@ARGV = ( '--config', 't/1.yml' );
+	@ARGV = ( '--config', 't/config/1.yml' );
 	my $o = Monitoring->new_with_options;
 
-	is $o->config, 't/1.yml';
+	is $o->config, 't/config/1.yml';
 	$o->read_config;
 	my $cfg = {
 		'report_file' => 'test_report.txt',
@@ -42,7 +42,7 @@ subtest one => sub {
 #subtest two => sub {
 #	plan tests => 1;
 #
-#	@ARGV = ('--config', 't/2.yml');
+#	@ARGV = ('--config', 't/config/2.yml');
 #	Monitoring->new_with_options;
 #	ok 1;
 #};
