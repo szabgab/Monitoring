@@ -4,6 +4,7 @@ no warnings 'redefine';
 
 use Test::More;
 use Test::Deep qw(cmp_deeply re);
+use Test::Mock::Simple;
 
 use File::Temp qw(tempdir);
 use Path::Tiny qw(path);
@@ -48,10 +49,13 @@ sub LWP::UserAgent::get {
 	return $response;
 }
 
-sub Monitoring::save {
-	my $self = shift;
-	push @results, \@_;
-}
+my $mock = Test::Mock::Simple->new( module => 'Monitoring' );
+$mock->add(
+	save => sub {
+		my $self = shift;
+		push @results, \@_;
+	}
+);
 
 sub Monitoring::send_mail {
 	shift;
