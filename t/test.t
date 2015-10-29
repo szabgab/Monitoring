@@ -45,6 +45,6 @@ sub Monitoring::send_mail {
 $o->run;
 cmp_deeply \@results, [ [ $DATE, 'http://perlmaven.com/', 200, '0' ], [ $DATE, 'http://codemaven.com/', 404, '0' ] ];
 
-#$o->report;
+#$o->generate_report;
 #diag explain \@reports;
 

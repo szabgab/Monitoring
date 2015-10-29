@@ -88,7 +88,7 @@ sub _log {
 	return;
 }
 
-sub report {
+sub generate_report {
 	my ($self) = @_;
 
 	my $report_file = $self->cfg->{report_file};
