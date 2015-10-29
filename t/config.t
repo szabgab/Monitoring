@@ -14,6 +14,7 @@ subtest one => sub {
 	my $o = Monitoring->new_with_options;
 
 	is $o->config, 't/1.yml';
+	$o->read_config;
 	my $cfg = {
 		'report_file' => 'test_report.txt',
 		'from'        => 'gabor@example.com',
