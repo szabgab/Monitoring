@@ -12,7 +12,7 @@ use Path::Tiny qw(path);
 use Monitoring;
 use Monitoring::Sendmail;
 
-plan tests => 5;
+plan tests => 6;
 
 #$ENV{EMAIL_SENDER_TRANSPORT} = 'Test';
 #my @mails = Email::Sender::Simple->default_transport->deliveries;
@@ -71,9 +71,16 @@ sub Monitoring::send_mail {
 $o->run;
 cmp_deeply \@results, [ [ $DATE, 'http://perlmaven.com/', 200, '0' ], [ $DATE, 'http://codemaven.com/', 404, '0' ] ];
 my @lines = path("$dir/report.txt")->lines;
-cmp_deeply \@lines,
-	[ re("^$DATE_STR,http:\/\/perlmaven.com\/,200,0\$"), re("^$DATE_STR,http:\/\/codemaven.com\/,404,0\$") ];
+cmp_deeply \@lines, [ re("^$DATE_STR,http://perlmaven.com/,200,0\$"), re("^$DATE_STR,http://codemaven.com/,404,0\$") ];
 
-#$o->generate_report;
-#diag explain \@reports;
+$o->generate_report;
+cmp_deeply \@reports,
+	[
+	[
+		{
+			'text' => re("^$DATE_STR  http://codemaven.com/  404  0\$"),
+		}
+	]
+	],
+	'generate_report';
 
