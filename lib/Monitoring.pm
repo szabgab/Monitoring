@@ -44,6 +44,7 @@ sub BUILD {
 		$site->{slow} = $site->{slow} || $self->cfg->{slow} || $SLOW;
 		$url{ $site->{url} } = $site;
 	}
+	$cfg->{url} = \%url;
 }
 
 sub run {

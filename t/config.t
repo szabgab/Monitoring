@@ -14,25 +14,27 @@ subtest one => sub {
 	my $o = Monitoring->new_with_options;
 
 	is $o->config, 't/1.yml';
-	is_deeply $o->cfg,
-		{
+	my $cfg = {
 		'report_file' => 'test_report.txt',
 		'from'        => 'gabor@example.com',
+		'to'          => 'szabgab@example.com',
 		'sites'       => [
 			{
 				'name' => 'Perl Maven',
 				'slow' => 1,
-				'url'  => 'http://perlmaven.com/'
+				'url'  => 'http://perlmaven.com/',
 			},
 			{
 				'name' => 'Code Maven',
 				'slow' => 4,
-				'url'  => 'http://codemaven.com/'
-			}
+				'url'  => 'http://codemaven.com/',
+			},
 		],
-		'to' => 'szabgab@example.com'
-		},
-		'1.yml configuration file';
+	};
+	$cfg->{url}{'http://codemaven.com/'} = $cfg->{sites}[1];
+	$cfg->{url}{'http://perlmaven.com/'} = $cfg->{sites}[0];
+
+	is_deeply $o->cfg, $cfg, '1.yml configuration file';
 };
 
 # see comment in BUILD of Monitoring.pm
