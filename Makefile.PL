@@ -28,6 +28,7 @@ WriteMakefile(
 		'Exporter'                       => 0,
 
 		'Test::More' => 0,
+		'Test::Most' => 0,
 		'Test::Deep' => 0,
 	},
 	dist => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
