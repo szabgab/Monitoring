@@ -44,7 +44,6 @@ sub run {
 
 	my $ua = LWP::UserAgent->new;
 	$ua->timeout(10);
-	my $csv = Text::CSV->new;
 
 	my $time = strftime '%Y-%m-%dT%H:%M:%S', gmtime();
 	foreach my $site (@{ $self->cfg->{sites} }) {
@@ -54,14 +53,23 @@ sub run {
 			my $response = $ua->get( $site->{url} );
 			my $end_time = time;
 			my $elapsed_time = int (1000 * ($end_time-$start_time)) / 1000;
-			open my $fh, '>>', $report_file;
-			flock($fh, LOCK_EX);
-			seek($fh, 0, SEEK_END);
-			$csv->combine($time, $site->{url}, $response->code, $elapsed_time);
-			printf $fh $csv->string . "\n";
+			$self->save($time, $site->{url}, $response->code, $elapsed_time);
 		};
 		print STDERR $@ if $@;
 	}
+
+	return;
+}
+
+sub save {
+	my ($self, @values) = @_;
+
+	my $csv = Text::CSV->new;
+	open my $fh, '>>', $report_file;
+	flock($fh, LOCK_EX);
+	seek($fh, 0, SEEK_END);
+	$csv->combine(@values);
+	printf $fh $csv->string . "\n";
 
 	return;
 }
