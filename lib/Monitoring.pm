@@ -25,12 +25,20 @@ my $SLOW = 1;
 sub BUILD {
 	my ($self) = @_;
 
+	# TODO: Apparently if we throw an exception here, MooX::Options will call its 'usage'
+	# method and will call exit(). We might need a differnt way to indicate missing
+	# configuration file and missing configuration fields.
+
 	die "Config file '" . $self->config . "'is missing\n" if not -e $self->config;
 
 	eval { $self->cfg( LoadFile $self->config ) };
 	die "Incorrect format of configuration file\n\n$@" if $@;
 
 	my $cfg = $self->cfg;
+	for my $field (qw(report_file)) {
+		die "Missing configuration parameter '$field'\n" if not defined $cfg->{$field};
+	}
+
 	my %url;
 	foreach my $site (@{ $self->cfg->{sites} }) {
 		$site->{slow} = $site->{slow} || $self->cfg->{slow} || $SLOW;

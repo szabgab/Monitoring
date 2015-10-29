@@ -1,5 +1,4 @@
 ---
-report_file: test_report.txt
 from: gabor@example.com
 to: szabgab@example.com
 sites:
