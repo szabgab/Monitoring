@@ -33,6 +33,8 @@ my $o = Monitoring->new_with_options;
 
 isa_ok $o, 'Monitoring';
 is $o->config, "$dir/monitor.yml", 'config';
+
+$o->read_config;
 is $o->cfg->{report_file}, "$dir/report.txt";
 
 my @fake_response_code;

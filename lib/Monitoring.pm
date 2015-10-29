@@ -24,7 +24,7 @@ has cfg => ( is => 'rw' );
 
 my $SLOW = 1;
 
-sub BUILD {
+sub read_config {
 	my ($self) = @_;
 
 	# TODO: Apparently if we throw an exception here, MooX::Options will call its 'usage'
@@ -47,10 +47,14 @@ sub BUILD {
 		$url{ $site->{url} } = $site;
 	}
 	$cfg->{url} = \%url;
+
+	return;
 }
 
 sub run {
 	my ($self) = @_;
+
+	$self->read_config;
 	$self->collect_data    if $self->collect;
 	$self->generate_report if $self->report;
 }
