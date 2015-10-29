@@ -10,7 +10,7 @@ use Monitoring::Sendmail;
 
 my $DATE = re('^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d$');
 
-@ARGV = ( '--config', 't/1.yml' );
+@ARGV = ( '--config', 't/1.yml', '--collect' );
 my $o = Monitoring->new_with_options;
 
 isa_ok $o, 'Monitoring';

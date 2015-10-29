@@ -17,6 +17,8 @@ our $VERSION = '0.01';
 
 option verbose => ( is => 'ro', required => 0, default => 0,   doc => 'Print what we are doing' );
 option config  => ( is => 'ro', required => 1, format  => 's', doc => 'Path to configuration YAML file (monitor.yml)' );
+option collect => ( is => 'ro' );
+option report  => ( is => 'ro' );
 
 has cfg => ( is => 'rw' );
 
@@ -48,6 +50,12 @@ sub BUILD {
 }
 
 sub run {
+	my ($self) = @_;
+	$self->collect_data    if $self->collect;
+	$self->generate_report if $self->report;
+}
+
+sub collect_data {
 	my ($self) = @_;
 
 	my $ua = LWP::UserAgent->new;
